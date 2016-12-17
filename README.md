@@ -6,6 +6,8 @@ This will build (and publish to `ers`) an example [hello-world electron applicat
 
 * `ubuntu`
 * `windows`
+* `macos`
+
 
 # Usage
 
@@ -23,6 +25,8 @@ rm *.box
 cd ..
 ```
 
+Build and install the [macOS Base Box](https://github.com/rgl/macos-vagrant).
+
 Add the following entry to your `/etc/hosts` file:
 
 ```
@@ -34,5 +38,7 @@ Run `vagrant up ers` to launch the server.
 Run `vagrant up ubuntu` to launch the Ubuntu client.
 
 Run `vagrant up windows` to launch the Windows client.
+
+Run `vagrant up macos` to launch the macOS client.
 
 To run the example application, login at each client, and install from http://ers.example.com.
