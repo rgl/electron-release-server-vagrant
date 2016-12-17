@@ -71,11 +71,15 @@ update-ca-certificates
 # publish an application.
 sudo -sHu vagrant <<'VAGRANT_EOF'
 set -eux
-git clone https://github.com/rgl/hello-world-electron.git
-pushd hello-world-electron
-make dist
-app_version=$(perl -ne '/"version": "(.+)"/ && print $1' package.json)
-app_path=dist/hello-world_${app_version}_amd64.AppImage
-mv "dist/hello-world-$app_version-x86_64.AppImage" $app_path
-python /vagrant/publish.py vagrant vagrant stable $app_version linux_64 $app_path
+tags=(v1.0.0 v1.1.0)
+for tag in "${tags[@]}"; do
+    git clone -b $tag https://github.com/rgl/hello-world-electron.git hello-world-electron-$tag
+    pushd hello-world-electron-$tag
+    make dist
+    app_version=$(perl -ne '/"version": "(.+)"/ && print $1' package.json)
+    app_path=dist/hello-world_${app_version}_amd64.AppImage
+    mv "dist/hello-world-$app_version-x86_64.AppImage" $app_path
+    python /vagrant/publish.py vagrant vagrant stable $app_version linux_64 $app_path
+    popd
+done
 VAGRANT_EOF
