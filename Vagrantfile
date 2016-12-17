@@ -1,5 +1,7 @@
 config_ers_fqdn     = 'ers.example.com'
 config_ers_ip       = '10.10.10.100'
+config_ubuntu_fqdn  = "ubuntu.#{config_ers_fqdn}"
+config_ubuntu_ip    = '10.10.10.101'
 
 Vagrant.configure(2) do |config|
   config.vm.provider 'virtualbox' do |vb|
@@ -21,5 +23,18 @@ Vagrant.configure(2) do |config|
     config.vm.hostname = config_ers_fqdn
     config.vm.network :private_network, ip: config_ers_ip
     config.vm.provision :shell, path: 'provision.sh'
+  end
+
+  config.vm.define :ubuntu do |config|
+    config.vm.provider :virtualbox do |vb|
+      vb.customize ["storageattach", :id, "--storagectl", "IDE Controller", "--device", 0, "--port", 1, "--type", "dvddrive", "--medium", "additions"]
+    end
+    config.vm.hostname = config_ubuntu_fqdn
+    config.vm.network :private_network, ip: config_ubuntu_ip
+    config.vm.provision :shell, inline: "echo '#{config_ers_ip} #{config_ers_fqdn}' >>/etc/hosts"
+    config.vm.provision :shell, path: 'provision-ubuntu.sh'
+    config.vm.provision :reload
+    config.vm.provision 'shell', path: 'provision-ubuntu-virtualbox-guest-additions.sh'
+    config.vm.provision :reload
   end
 end
