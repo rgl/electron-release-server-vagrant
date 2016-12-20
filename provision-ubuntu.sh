@@ -70,6 +70,8 @@ update-ca-certificates
 
 # publish an application.
 sudo -sHu vagrant <<'VAGRANT_EOF'
+export ERS_USERNAME=vagrant
+export ERS_PASSWORD=vagrant
 set -eux
 tags=(v1.0.0 v1.1.0)
 for tag in "${tags[@]}"; do
@@ -79,7 +81,7 @@ for tag in "${tags[@]}"; do
     app_version=$(perl -ne '/"version": "(.+)"/ && print $1' package.json)
     app_path=dist/hello-world_${app_version}_amd64.AppImage
     mv "dist/hello-world-$app_version-x86_64.AppImage" $app_path
-    python /vagrant/publish.py vagrant vagrant stable $app_version linux_64 $app_path
+    python /vagrant/publish.py stable $app_version linux_64 $app_path
     popd
 done
 VAGRANT_EOF

@@ -236,6 +236,8 @@ pip install requests
 
 # build and publish the hello-world app.
 Bash @"
+export ERS_USERNAME=vagrant
+export ERS_PASSWORD=vagrant
 set -eux
 cd ~
 tags=(v1.0.0 v1.1.0)
@@ -246,7 +248,7 @@ for tag in "`${tags[@]}"; do
     app_version=`$(perl -ne '/"version": "(.+)"/ && print `$1' package.json)
     app_path=dist/hello-world-setup_`${app_version}_amd64.exe
     mv "dist/hello-world Setup `$app_version.exe" `$app_path
-    python /c/vagrant/publish.py vagrant vagrant stable `$app_version windows_64 `$app_path --ca-file /c/vagrant/tmp/$config_ers_fqdn-crt.pem
+    python /c/vagrant/publish.py stable `$app_version windows_64 `$app_path --ca-file /c/vagrant/tmp/$config_ers_fqdn-crt.pem
     popd
 done
 "@

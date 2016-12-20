@@ -6,6 +6,7 @@
 import argparse
 import textwrap
 import requests
+import os
 
 def login(base_url, ca_file, username, password):
     response = requests.get(
@@ -60,16 +61,18 @@ parser = argparse.ArgumentParser(
     description="Publishes an asset to the electron-release-server.",
     epilog=textwrap.dedent('''
         example:
-          %(prog)s vagrant vagrant stable 1.0.0 windows_64 hello-world-electron/dist/*1.0.0.exe
+          export ERS_USERNAME=vagrant
+          export ERS_PASSWORD=vagrant
+          %(prog)s stable 1.0.0 windows_64 hello-world-electron/dist/*1.0.0.exe
         '''))
-parser.add_argument("username")
-parser.add_argument("password")
 parser.add_argument("channel", choices=["stable", "rc", "beta", "alpha"])
 parser.add_argument("version")
 parser.add_argument("platform", choices=["windows_64", "windows_32", "osx_64", "linux_64", "linux_32"])
 parser.add_argument("path")
 parser.add_argument("--notes")
 parser.add_argument("--base-url", default="https://ers.example.com")
+parser.add_argument("--username", default=os.environ.get("ERS_USERNAME"))
+parser.add_argument("--password", default=os.environ.get("ERS_PASSWORD"))
 parser.add_argument("--ca-file", default="/vagrant/tmp/ers.example.com-crt.pem")
 args = parser.parse_args()
 
