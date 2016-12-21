@@ -150,9 +150,9 @@ npm --version
 sudo -sHu ers <<EOF
 set -eux
 cd /opt/ers
-ers_tarball=v1.4.2.tar.gz
+ers_tarball=v1.4.3.tar.gz
 ers_download_url=https://github.com/ArekSredzki/electron-release-server/archive/\$ers_tarball
-ers_download_sha1=70e3ce382d211ed7b648ab6c8d65a59652d46cfe
+ers_download_sha1=2d0eab4a3df866a6e6b0ed314041badd49c65a29
 wget -q \$ers_download_url
 if [ "\$(sha1sum \$ers_tarball | awk '{print \$1}')" != "\$ers_download_sha1" ]; then
     echo "downloaded \$ers_download_url failed the checksum verification"
