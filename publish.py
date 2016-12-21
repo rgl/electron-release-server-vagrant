@@ -9,10 +9,10 @@ import requests
 import os
 
 def login(base_url, ca_file, username, password):
-    response = requests.get(
+    response = requests.post(
         base_url+"/api/auth/login",
         verify=ca_file,
-        params={
+        json={
             "username": username,
             "password": password})
     response.raise_for_status()
