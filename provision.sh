@@ -161,6 +161,8 @@ fi
 tar xf \$ers_tarball --strip-components 1
 rm \$ers_tarball
 export NODE_ENV=production
+# patch the source to recognize the .AppImage format (instead of .deb).
+sed -i -E 's,\\.deb,.AppImage,' assets/js/core/data/data-service.js
 npm install
 ./node_modules/.bin/bower install
 npm cache clean
