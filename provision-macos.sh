@@ -94,6 +94,7 @@ export CSC_KEY_PASSWORD=password
 certtool i example-code-signing-crt.pem k=example-code-signing.keychain r=example-code-signing-keypair.pem c p=$CSC_KEY_PASSWORD
 security list-keychains -d user -s login.keychain example-code-signing.keychain
 security unlock-keychain -p $CSC_KEY_PASSWORD example-code-signing.keychain
+security set-keychain-settings -u -t 3600 example-code-signing.keychain
 for release in "${releases[@]}"; do
     tag=$(echo -n "$release" | sed -E 's,([^ ]+) (.+),\1,')
     notes=$(echo -n "$release" | sed -E 's,([^ ]+) (.+),\2,')
