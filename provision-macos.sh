@@ -87,6 +87,13 @@ releases=(
 )
 git clone https://github.com/rgl/hello-world-electron.git hello-world-electron
 pushd hello-world-electron
+make example-code-signing.p12
+sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain example-code-signing-ca-crt.pem
+export CSC_NAME='Rui Lopes'
+export CSC_KEY_PASSWORD=password
+certtool i example-code-signing-crt.pem k=example-code-signing.keychain r=example-code-signing-keypair.pem c p=$CSC_KEY_PASSWORD
+security list-keychains -d user -s login.keychain example-code-signing.keychain
+security unlock-keychain -p $CSC_KEY_PASSWORD example-code-signing.keychain
 for release in "${releases[@]}"; do
     tag=$(echo -n "$release" | sed -E 's,([^ ]+) (.+),\1,')
     notes=$(echo -n "$release" | sed -E 's,([^ ]+) (.+),\2,')
