@@ -8,7 +8,10 @@ config_ers_fqdn=$(hostname | sed -E 's,^[a-z]+\.,,')
 diskutil rename disk0s2 macOS
 
 # install homebrew.
-ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" </dev/null
+while ! ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" </dev/null; do
+    sleep 5
+    echo 'retrying homebrew install...'
+done
 brew analytics off
 
 # configure vim.
