@@ -104,5 +104,8 @@ for release in "${releases[@]}"; do
     app_path=dist/mac/hello-world_${app_version}_amd64.dmg
     mv "dist/mac/hello-world-$app_version.dmg" $app_path
     python3 /vagrant/publish.py stable $app_version osx_64 $app_path --notes "$notes"
+    for app_update_path in "dist/mac/hello-world-$app_version-*.zip"; do
+        python3 /vagrant/publish.py stable $app_version osx_64 $app_update_path --notes "$notes"
+    done
 done
 popd
