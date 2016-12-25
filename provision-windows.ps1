@@ -250,15 +250,24 @@ export ERS_USERNAME=vagrant
 export ERS_PASSWORD=vagrant
 set -eux
 cd ~
-tags=(v1.0.0 v1.1.0)
-for tag in "`${tags[@]}"; do
-    git clone -b `$tag https://github.com/rgl/hello-world-electron.git hello-world-electron-`$tag
-    pushd hello-world-electron-`$tag
+declare -A releases=(
+    [v1.0.0]=''
+    [v1.1.0]='show ip address'
+    [v1.2.0]='show ip location'
+)
+git clone https://github.com/rgl/hello-world-electron.git hello-world-electron
+pushd hello-world-electron
+for tag in "`${!releases[@]}"; do
+    git checkout -q `$tag
     make dist
     app_version=`$(perl -ne '/"version": "(.+)"/ && print `$1' package.json)
-    app_path=dist/hello-world-setup_`${app_version}_amd64.exe
-    mv "dist/hello-world Setup `$app_version.exe" `$app_path
-    python /c/vagrant/publish.py stable `$app_version windows_64 `$app_path --ca-file /c/vagrant/tmp/$config_ers_fqdn-crt.pem
-    popd
+    app_path=dist/win/hello-world-setup_`${app_version}_amd64.exe
+    mv "dist/win/hello-world Setup `$app_version.exe" `$app_path
+    notes=`${releases[`$tag]}
+    python /c/vagrant/publish.py stable `$app_version windows_64 `$app_path --notes "`$notes" --ca-file /c/vagrant/tmp/$config_ers_fqdn-crt.pem
+    for app_nupkg_path in "dist/win/hello-world-`$app_version-*.nupkg"; do
+        python /c/vagrant/publish.py stable `$app_version windows_64 `$app_nupkg_path --notes "`$notes" --ca-file /c/vagrant/tmp/$config_ers_fqdn-crt.pem
+    done
 done
+popd
 "@

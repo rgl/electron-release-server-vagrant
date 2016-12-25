@@ -73,15 +73,21 @@ sudo -sHu vagrant <<'VAGRANT_EOF'
 export ERS_USERNAME=vagrant
 export ERS_PASSWORD=vagrant
 set -eux
-tags=(v1.0.0 v1.1.0)
-for tag in "${tags[@]}"; do
-    git clone -b $tag https://github.com/rgl/hello-world-electron.git hello-world-electron-$tag
-    pushd hello-world-electron-$tag
+declare -A releases=(
+    [v1.0.0]=''
+    [v1.1.0]='show ip address'
+    [v1.2.0]='show ip location'
+)
+git clone https://github.com/rgl/hello-world-electron.git hello-world-electron
+pushd hello-world-electron
+for tag in "${!releases[@]}"; do
+    git checkout -q $tag
     make dist
     app_version=$(perl -ne '/"version": "(.+)"/ && print $1' package.json)
     app_path=dist/hello-world_${app_version}_amd64.AppImage
     mv "dist/hello-world-$app_version-x86_64.AppImage" $app_path
-    python /vagrant/publish.py stable $app_version linux_64 $app_path
-    popd
+    notes="${releases[$tag]}"
+    python /vagrant/publish.py stable $app_version linux_64 $app_path --notes "$notes"
 done
+popd
 VAGRANT_EOF

@@ -77,14 +77,21 @@ brew install node
 # publish an application.
 export ERS_USERNAME=vagrant
 export ERS_PASSWORD=vagrant
-tags=(v1.0.0 v1.1.0)
-for tag in "${tags[@]}"; do
-    git clone -b $tag https://github.com/rgl/hello-world-electron.git hello-world-electron-$tag
-    pushd hello-world-electron-$tag
+releases=(
+    'v1.0.0 hello world'
+    'v1.1.0 show ip address'
+    'v1.2.0 show ip location'
+)
+git clone https://github.com/rgl/hello-world-electron.git hello-world-electron
+pushd hello-world-electron
+for release in "${releases[@]}"; do
+    tag=$(echo -n "$release" | sed -E 's,([^ ]+) (.+),\1,')
+    notes=$(echo -n "$release" | sed -E 's,([^ ]+) (.+),\2,')
+    git checkout -q $tag
     make dist
     app_version=$(perl -ne '/"version": "(.+)"/ && print $1' package.json)
     app_path=dist/mac/hello-world_${app_version}_amd64.dmg
     mv "dist/mac/hello-world-$app_version.dmg" $app_path
-    python3 /vagrant/publish.py stable $app_version osx_64 $app_path
-    popd
+    python3 /vagrant/publish.py stable $app_version osx_64 $app_path --notes "$notes"
 done
+popd
